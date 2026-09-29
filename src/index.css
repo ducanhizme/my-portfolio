@@ -4,6 +4,8 @@
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+  --font-michroma: 'Michroma', sans-serif;
+  --font-montserrat: 'Montserrat', sans-serif;
 }
 
 @layer base {

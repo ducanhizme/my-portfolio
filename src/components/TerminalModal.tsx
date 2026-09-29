@@ -1,21 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Terminal as TerminalIcon, X, Maximize2, Minimize2 } from 'lucide-react';
+import { Terminal as TerminalIcon, X, Maximize2, Minimize2, ChevronDown, Trash2 } from 'lucide-react';
 import { projects } from '../data/projects';
-import { labExperiments } from '../data/lab';
 import { soundManager } from '../utils/audio';
 
 interface TerminalModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpen?: () => void;
   onOpenProject?: (projectId: string) => void;
-  onOpenLab?: (labId: string) => void;
 }
 
 export const TerminalModal: React.FC<TerminalModalProps> = ({
   isOpen,
   onClose,
+  onOpen,
   onOpenProject,
-  onOpenLab,
 }) => {
   const [history, setHistory] = useState<Array<{ cmd?: string; output: React.ReactNode }>>([
     {
@@ -28,14 +27,20 @@ export const TerminalModal: React.FC<TerminalModalProps> = ({
             Type <span className="text-cyan-300 font-bold">help</span> to list available commands. Press <span className="text-cyan-300 font-bold">Tab</span> for auto-complete.
           </div>
           <div className="flex items-start gap-6 pt-2 font-mono text-xs">
-            <pre className="text-cyan-400 leading-tight select-none">
-{`   /\\_/\\
-  ( o.o )
-   > ^ <
-  MEOW
-  WELCOME TO
-  MY PORTFOLIO
-  ^_^`}
+            <pre className="text-cyan-400 leading-tight select-none font-mono text-[11px] sm:text-xs">
+{[
+  "  ,-.       _,---._ __  / \\",
+  " /  )    .-'       `./ /   \\",
+  "(  (   ,'            `/    /|",
+  " \\  `-\"             \\'\\   / |",
+  "  `.              ,  \\ \\ /  |",
+  "   /`.          ,'-`----Y   |",
+  "  (            ;        |   '",
+  "  |  ,-.    ,-'         |  /",
+  "  |  | (   |        hjw | /",
+  "  )  |  \\  `.___________|/",
+  "  `--'   `--'"
+].join('\n')}
             </pre>
             <div className="space-y-1 text-slate-300">
               <div><span className="text-cyan-400 font-semibold">User:</span> guest@portfolio</div>
@@ -70,16 +75,12 @@ export const TerminalModal: React.FC<TerminalModalProps> = ({
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [history]);
 
-  if (!isOpen) return null;
-
   const availableCommands = [
     'help',
     'about',
     'projects',
     'open',
     'stack',
-    'lab',
-    'run',
     'experience',
     'contact',
     'matrix',
@@ -112,8 +113,6 @@ export const TerminalModal: React.FC<TerminalModalProps> = ({
               <div><span className="text-cyan-300 font-semibold">projects</span> - List flagship production systems</div>
               <div><span className="text-cyan-300 font-semibold">open &lt;project&gt;</span> - Inspect case study (e.g. open hive-kms)</div>
               <div><span className="text-cyan-300 font-semibold">stack</span> - View system map & technologies</div>
-              <div><span className="text-cyan-300 font-semibold">lab</span> - List 8 interactive experiments</div>
-              <div><span className="text-cyan-300 font-semibold">run &lt;exp&gt;</span> - Launch experiment (e.g. run rag-eval)</div>
               <div><span className="text-cyan-300 font-semibold">experience</span> - View 2022-2026 trajectory</div>
               <div><span className="text-cyan-300 font-semibold">contact</span> - Get direct email & channels</div>
               <div><span className="text-cyan-300 font-semibold">matrix</span> - Toggle matrix terminal aesthetic</div>
@@ -196,47 +195,6 @@ export const TerminalModal: React.FC<TerminalModalProps> = ({
             <div>· <span className="text-white font-semibold">Observability:</span> OpenTelemetry, Prometheus, Grafana, LangSmith</div>
           </div>
         );
-        break;
-
-      case 'lab':
-        resultOutput = (
-          <div className="space-y-2 text-xs">
-            <div className="text-cyan-400 font-bold">THE LAB EXPERIMENTS:</div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-slate-300">
-              {labExperiments.map((e) => (
-                <div key={e.id}>
-                  <span className="text-cyan-300 font-semibold">{e.id}</span>: {e.title}
-                </div>
-              ))}
-            </div>
-            <div className="text-slate-500 text-[11px]">
-              Tip: Type <span className="text-cyan-300">run &lt;exp-id&gt;</span> (e.g. <span className="text-cyan-300">run rag-eval</span>)
-            </div>
-          </div>
-        );
-        break;
-
-      case 'run':
-        if (!arg) {
-          resultOutput = (
-            <div className="text-red-400 text-xs">
-              Usage: run &lt;lab-id&gt; (e.g. run rag-eval, run multi-agent, run prompt-injection)
-            </div>
-          );
-        } else {
-          const match = labExperiments.find((e) => e.id === arg || e.title.toLowerCase().includes(arg));
-          if (match && onOpenLab) {
-            onOpenLab(match.id);
-            onClose();
-            return;
-          } else {
-            resultOutput = (
-              <div className="text-amber-400 text-xs">
-                Experiment "{arg}" not found. Type 'lab' to see all experiment IDs.
-              </div>
-            );
-          }
-        }
         break;
 
       case 'experience':
@@ -330,48 +288,122 @@ export const TerminalModal: React.FC<TerminalModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6">
+    <>
+      {/* Floating dock button when terminal is closed */}
+      {onOpen && (
+        <button
+          onClick={() => {
+            soundManager.playClick();
+            onOpen();
+          }}
+          className={`fixed bottom-5 right-6 z-40 flex items-center gap-2.5 px-3.5 py-2 bg-[#04060c]/90 hover:bg-[#090f1e] text-cyan-300 hover:text-cyan-200 border border-cyan-500/40 hover:border-cyan-400 rounded-full font-mono text-xs shadow-[0_0_25px_rgba(6,182,212,0.25)] transition-all duration-300 ease-out cursor-pointer backdrop-blur-md group hover:scale-[1.03] ${
+            isOpen
+              ? 'opacity-0 translate-y-4 pointer-events-none'
+              : 'opacity-100 translate-y-0 pointer-events-auto'
+          }`}
+          title="Open Integrated Terminal (⌘K or Ctrl+`)"
+        >
+          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse group-hover:scale-125 transition-transform" />
+          <TerminalIcon size={13} className="text-cyan-400" />
+          <span className="font-semibold tracking-wide text-[11px]">anhnd@portfolio: ~</span>
+          <span className="text-[10px] text-cyan-400/80 border border-cyan-500/30 px-1.5 py-0.5 rounded font-sans bg-black/50">
+            ⌘K
+          </span>
+        </button>
+      )}
+
+      {/* Light backdrop scrim above dock (clicking closes terminal) */}
       <div
-        className={`bg-[#05070c] border border-cyan-500/40 rounded-sm flex flex-col shadow-[0_0_60px_rgba(6,182,212,0.25)] transition-all ${
-          isFullScreen ? 'w-full h-full' : 'w-full max-w-4xl h-[78vh]'
-        } ${matrixMode ? 'text-emerald-400 border-emerald-500/50' : 'text-slate-200'}`}
+        onClick={onClose}
+        className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-[1.5px] transition-opacity duration-300 ease-in-out ${
+          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+      />
+
+      {/* VS Code-style Integrated Bottom Dock with slide-up & slide-down animation */}
+      <div
+        className={`fixed bottom-0 left-0 right-0 z-50 flex flex-col bg-[#04060c]/95 backdrop-blur-2xl border-t border-cyan-500/40 shadow-[0_-12px_45px_rgba(6,182,212,0.2)] transition-all duration-300 ease-in-out ${
+          isOpen
+            ? 'translate-y-0 opacity-100 pointer-events-auto'
+            : 'translate-y-full opacity-0 pointer-events-none'
+        } ${isFullScreen ? 'h-[90vh]' : 'h-[48vh] sm:h-[45vh]'} ${
+          matrixMode ? 'text-emerald-400 border-emerald-500/50' : 'text-slate-200'
+        }`}
       >
-        {/* Terminal Header Bar matching mockup Panel 08 */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-black/60 font-mono text-xs select-none">
-          {/* Traffic light dots */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onClose}
-              className="w-3 h-3 rounded-full bg-red-500/80 hover:bg-red-400 transition-colors cursor-pointer"
-              title="Close terminal"
-            />
+        {/* VS Code Style Header Bar */}
+        <div className="flex items-center justify-between px-3 sm:px-5 py-2 border-b border-white/10 bg-black/70 font-mono text-xs select-none gap-2">
+          {/* Left: Window Controls + Active Tab + Quick Command Chips */}
+          <div className="flex items-center gap-3 sm:gap-4 overflow-x-auto no-scrollbar">
+            {/* Traffic lights */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              <button
+                onClick={onClose}
+                className="w-3 h-3 rounded-full bg-red-500/80 hover:bg-red-400 transition-colors cursor-pointer"
+                title="Close terminal"
+              />
+              <button
+                onClick={() => setHistory([])}
+                className="w-3 h-3 rounded-full bg-yellow-500/80 hover:bg-yellow-400 transition-colors cursor-pointer"
+                title="Clear buffer"
+              />
+              <button
+                onClick={() => setIsFullScreen((prev) => !prev)}
+                className="w-3 h-3 rounded-full bg-emerald-500/80 hover:bg-emerald-400 transition-colors cursor-pointer"
+                title={isFullScreen ? 'Restore terminal height' : 'Expand to full height'}
+              />
+            </div>
+
+            {/* Active Terminal Tab (VS Code style) */}
+            <div className="flex items-center gap-2 px-2.5 py-1 bg-white/[0.06] border-b-2 border-cyan-400 text-cyan-300 rounded-t-xs text-[11px] font-semibold shrink-0">
+              <TerminalIcon size={12} className={matrixMode ? 'text-emerald-400' : 'text-cyan-400'} />
+              <span>TERMINAL</span>
+              <span className="text-[10px] text-slate-400 font-normal hidden md:inline">
+                (bash: anhnd@portfolio)
+              </span>
+            </div>
+
+            {/* Quick command buttons */}
+            <div className="hidden lg:flex items-center gap-1.5 text-[10px] text-slate-400">
+              <span className="text-slate-600">Quick:</span>
+              {['help', 'projects', 'stack', 'about', 'clear'].map((cmdName) => (
+                <button
+                  key={cmdName}
+                  onClick={() => handleCommand(cmdName)}
+                  className="px-2 py-0.5 rounded bg-white/5 hover:bg-cyan-500/20 text-slate-400 hover:text-cyan-300 border border-white/5 hover:border-cyan-500/30 transition-colors cursor-pointer"
+                >
+                  {cmdName}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Controls */}
+          <div className="flex items-center gap-1 sm:gap-2 text-slate-400 shrink-0">
             <button
               onClick={() => setHistory([])}
-              className="w-3 h-3 rounded-full bg-yellow-500/80 hover:bg-yellow-400 transition-colors cursor-pointer"
-              title="Clear terminal"
-            />
+              className="hover:text-cyan-300 hover:bg-white/5 p-1 rounded transition-colors cursor-pointer"
+              title="Clear terminal buffer"
+            >
+              <Trash2 size={13} />
+            </button>
             <button
               onClick={() => setIsFullScreen((prev) => !prev)}
-              className="w-3 h-3 rounded-full bg-emerald-500/80 hover:bg-emerald-400 transition-colors cursor-pointer"
-              title="Maximize terminal"
-            />
-          </div>
-
-          <div className="flex items-center gap-2 text-slate-400 font-mono text-[11px]">
-            <TerminalIcon size={12} className={matrixMode ? 'text-emerald-400' : 'text-cyan-400'} />
-            <span>duc@portfolio: ~ (bash)</span>
-          </div>
-
-          <div className="flex items-center gap-2 text-slate-400">
-            <button
-              onClick={() => setIsFullScreen((prev) => !prev)}
-              className="hover:text-white transition-colors cursor-pointer p-1"
+              className="hover:text-cyan-300 hover:bg-white/5 p-1 rounded transition-colors cursor-pointer"
+              title={isFullScreen ? 'Restore size' : 'Maximize terminal'}
             >
               {isFullScreen ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
             </button>
             <button
               onClick={onClose}
-              className="hover:text-white transition-colors cursor-pointer p-1"
+              className="hover:text-cyan-300 hover:bg-white/5 p-1 rounded transition-colors cursor-pointer"
+              title="Collapse terminal"
+            >
+              <ChevronDown size={15} />
+            </button>
+            <button
+              onClick={onClose}
+              className="hover:text-white hover:bg-white/5 p-1 rounded transition-colors cursor-pointer"
+              title="Close terminal"
             >
               <X size={14} />
             </button>
@@ -379,13 +411,13 @@ export const TerminalModal: React.FC<TerminalModalProps> = ({
         </div>
 
         {/* Terminal Buffer */}
-        <div className="flex-1 p-5 overflow-y-auto space-y-4 font-mono text-xs select-text">
+        <div className="flex-1 p-4 sm:p-5 overflow-y-auto space-y-4 font-mono text-xs select-text">
           {history.map((item, idx) => (
             <div key={idx} className="space-y-1">
               {item.cmd && (
                 <div className="flex items-center gap-2 text-slate-400">
                   <span className={matrixMode ? 'text-emerald-400' : 'text-cyan-400'}>
-                    duc@portfolio ~ $
+                    anhnd@portfolio ~ $
                   </span>
                   <span className="text-white font-medium">{item.cmd}</span>
                 </div>
@@ -397,7 +429,7 @@ export const TerminalModal: React.FC<TerminalModalProps> = ({
           {/* Active Input Line */}
           <div className="flex items-center gap-2 pt-2">
             <span className={matrixMode ? 'text-emerald-400' : 'text-cyan-400 font-bold shrink-0'}>
-              duc@portfolio ~ $
+              anhnd@portfolio ~ $
             </span>
             <input
               ref={inputRef}
@@ -415,15 +447,19 @@ export const TerminalModal: React.FC<TerminalModalProps> = ({
         </div>
 
         {/* Status Bar */}
-        <div className="px-4 py-2 border-t border-white/10 bg-black/60 font-mono text-[10px] text-slate-500 flex items-center justify-between">
+        <div className="px-4 py-1.5 border-t border-white/10 bg-black/80 font-mono text-[10px] text-slate-500 flex items-center justify-between">
           <div className="flex items-center gap-4">
+            <span className="text-cyan-400/80">● INTEGRATED SHELL</span>
             <span>TYPE 'help' FOR COMMANDS</span>
             <span className="hidden sm:inline">TAB: AUTOCOMPLETE</span>
             <span className="hidden sm:inline">↑/↓: HISTORY</span>
           </div>
-          <div>STATUS: READY (200 OK)</div>
+          <div className="flex items-center gap-3">
+            <span className="hidden sm:inline text-slate-400">STATUS: 200 OK</span>
+            <span className="text-slate-400">UTF-8</span>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };

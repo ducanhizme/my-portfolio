@@ -23,7 +23,7 @@ export const EXACT_NODES: ExactNode[] = [
   {
     id: 'hub_agent',
     x: 68.8,
-    y: 7.5,
+    y: 11.5,
     z: 0.15,
     importance: 'hub',
     label: 'AGENT',

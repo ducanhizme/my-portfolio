@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Mail, Github, Linkedin, FileText, Check, ArrowRight, Sparkles } from 'lucide-react';
 import { soundManager } from '../utils/audio';
+import { useLanguage } from '../context/LanguageContext';
 
 export const ContactSection: React.FC = () => {
+  const { t, language } = useLanguage();
   const [copied, setCopied] = useState(false);
   const email = 'ninhanh917@gmail.com';
 
@@ -26,7 +28,7 @@ export const ContactSection: React.FC = () => {
         {/* Quote banner matching mockup */}
         <div className="text-right mb-12">
           <span className="font-mono text-xs md:text-sm text-cyan-400/90 tracking-widest uppercase">
-            &ldquo;BETTER SYSTEMS. A BRIGHTER TOMORROW.&rdquo;
+            {t.contact.quote}
           </span>
         </div>
 
@@ -34,19 +36,19 @@ export const ContactSection: React.FC = () => {
         <div className="max-w-4xl space-y-6 mb-16">
           <div className="text-xs font-mono text-cyan-400 tracking-widest uppercase flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-            <span>09 // INITIATE TRANSMISSION</span>
+            <span>{t.contact.kicker}</span>
           </div>
 
-          <h2 className="text-4xl sm:text-6xl lg:text-7xl font-bold font-display text-white tracking-tight leading-[1.1]">
-            LET'S BUILD <br />
-            SOMETHING <br />
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-display text-white tracking-tight leading-[1.1]">
+            {t.contact.headline1} <br />
+            {t.contact.headline2} <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-white">
-              INTERESTING.
+              {t.contact.headline3}
             </span>
           </h2>
 
           <p className="text-slate-400 text-base md:text-xl font-light max-w-2xl leading-relaxed">
-            Available for opportunities in autonomous agent engineering, production RAG systems, and resilient distributed platforms.
+            {t.contact.subtitle}
           </p>
 
           {/* Action Row */}
@@ -56,7 +58,7 @@ export const ContactSection: React.FC = () => {
               onClick={() => soundManager.playClick()}
               className="inline-flex items-center gap-3 px-8 py-4 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono text-xs md:text-sm font-bold tracking-wider rounded transition-all duration-200 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] cursor-pointer"
             >
-              <span>EMAIL ME</span>
+              <span>{t.contact.emailBtn}</span>
               <ArrowRight size={15} />
             </a>
 
@@ -67,12 +69,12 @@ export const ContactSection: React.FC = () => {
               {copied ? (
                 <>
                   <Check size={14} className="text-emerald-400" />
-                  <span className="text-emerald-400">COPIED TO CLIPBOARD!</span>
+                  <span className="text-emerald-400">{t.contact.copiedBtn}</span>
                 </>
               ) : (
                 <>
                   <Mail size={14} className="text-cyan-400" />
-                  <span>COPY EMAIL ADDRESS</span>
+                  <span>{t.contact.copyBtn}</span>
                 </>
               )}
             </button>
@@ -106,7 +108,7 @@ export const ContactSection: React.FC = () => {
               className="flex items-center gap-2 hover:text-white transition-colors"
             >
               <FileText size={14} />
-              <span>Download CV (PDF) ↗</span>
+              <span>{language === 'vi' ? 'Tải CV (PDF) ↗' : 'Download CV (PDF) ↗'}</span>
             </a>
           </div>
         </div>
@@ -114,10 +116,12 @@ export const ContactSection: React.FC = () => {
         {/* Bottom Editorial Footer */}
         <div className="pt-16 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-slate-500">
           <div>
-            <span className="text-white font-bold">DUC ANH</span> · SOFTWARE & AI SYSTEMS ENGINEER
+            <span className="text-white font-bold">DUC ANH</span> · {language === 'vi' ? 'KỸ SƯ PHẦN MỀM & HỆ THỐNG AI' : 'SOFTWARE & AI SYSTEMS ENGINEER'}
           </div>
           <div>
-            DESIGNED WITH CINEMATIC DISCIPLINE · © 2026
+            {language === 'vi'
+              ? 'THIẾT KẾ VỚI TÂM HUYẾT & KỸ THUẬT VỮNG CHẮC · © 2026'
+              : 'CRAFTED WITH CARE & TECHNICAL DISCIPLINE · © 2026'}
           </div>
         </div>
       </div>

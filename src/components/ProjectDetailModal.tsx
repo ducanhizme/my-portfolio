@@ -4,6 +4,7 @@ import { Project } from '../types';
 import { projects } from '../data/projects';
 import { soundManager } from '../utils/audio';
 import { TechIcons } from './TechIcons';
+import { useLanguage } from '../context/LanguageContext';
 
 interface ProjectDetailModalProps {
   project: Project | null;
@@ -11,20 +12,22 @@ interface ProjectDetailModalProps {
   onOpenExperiment?: (experimentId: string) => void;
 }
 
-const SLIDES = [
-  { id: 'overview', number: '01', title: 'OVERVIEW' },
-  { id: 'problem', number: '02', title: 'PROBLEM' },
-  { id: 'approach', number: '03', title: 'APPROACH' },
-  { id: 'architecture', number: '04', title: 'ARCHITECTURE' },
-  { id: 'results', number: '05', title: 'RESULTS' },
-] as const;
-
 export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
-  project,
+  project: rawProject,
   onClose,
 }) => {
+  const { t, localizeProject } = useLanguage();
+  const project = rawProject ? localizeProject(rawProject) : null;
   const [currentSlide, setCurrentSlide] = useState(0);
   const isWheelingRef = useRef(false);
+
+  const SLIDES = [
+    { id: 'overview', number: '01', title: t.modal.overview },
+    { id: 'problem', number: '02', title: t.modal.problem },
+    { id: 'approach', number: '03', title: t.modal.approach },
+    { id: 'architecture', number: '04', title: t.modal.architecture },
+    { id: 'results', number: '05', title: t.modal.results },
+  ] as const;
 
   // Lock body scroll while modal is active
   useEffect(() => {

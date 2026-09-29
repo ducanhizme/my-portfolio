@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { CAREER_TIMELINE, CareerMilestone } from '../data/careerTimeline';
 import { soundManager } from '../utils/audio';
+import { useLanguage } from '../context/LanguageContext';
 
 interface EngineeringTimelineProps {
   reducedMotion?: boolean;
@@ -9,9 +10,16 @@ interface EngineeringTimelineProps {
 export const EngineeringTimeline: React.FC<EngineeringTimelineProps> = ({
   reducedMotion = false,
 }) => {
+  const { t } = useLanguage();
   const sectionRef = useRef<HTMLElement | null>(null);
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [hoveredYear, setHoveredYear] = useState<string | null>(null);
+
+  // Merge static metadata (like isCurrent) with localized content
+  const milestones = t.timeline.milestones.map((m, idx) => ({
+    ...m,
+    isCurrent: CAREER_TIMELINE[idx]?.isCurrent,
+  }));
 
   useEffect(() => {
     if (!sectionRef.current) return;
@@ -48,16 +56,16 @@ export const EngineeringTimeline: React.FC<EngineeringTimelineProps> = ({
         <header className="max-w-3xl mb-16 sm:mb-24 space-y-4">
           <div className="flex items-center gap-2.5 text-xs font-mono tracking-widest text-cyan-400 uppercase">
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-            <span>07 // CAREER EVOLUTION</span>
+            <span>{t.timeline.kicker}</span>
           </div>
 
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-display text-white tracking-tight uppercase leading-[1.05]">
-            ENGINEERING <br />
-            TIMELINE.
+            {t.timeline.title1} <br />
+            {t.timeline.title2}
           </h2>
 
           <p className="text-base sm:text-lg text-slate-300 font-light leading-relaxed">
-            From building interfaces to designing intelligent systems.
+            {t.timeline.subtitle}
           </p>
         </header>
 
@@ -78,7 +86,7 @@ export const EngineeringTimeline: React.FC<EngineeringTimelineProps> = ({
 
           {/* 5 Milestone Columns Spaced Across Timeline */}
           <div className="grid grid-cols-5 gap-6 lg:gap-8 items-start relative -top-[55px]">
-            {CAREER_TIMELINE.map((m, idx) => {
+            {milestones.map((m, idx) => {
               const isCurrent = m.isCurrent;
               const isHovered = hoveredYear === m.year;
               // Stagger delay for entry reveal
@@ -198,7 +206,7 @@ export const EngineeringTimeline: React.FC<EngineeringTimelineProps> = ({
           <div className="absolute left-[7px] top-2 bottom-4 w-[1px] bg-white/[0.15]" />
 
           <div className="space-y-10">
-            {CAREER_TIMELINE.map((m) => {
+            {milestones.map((m) => {
               const isCurrent = m.isCurrent;
 
               return (

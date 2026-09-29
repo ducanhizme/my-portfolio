@@ -7,21 +7,17 @@ import { EngineeringEvolution } from './components/EngineeringEvolution';
 import { EngineeringDNA } from './components/EngineeringDNA';
 import { EngineeringStack } from './components/EngineeringStack';
 import { EngineeringTimeline } from './components/EngineeringTimeline';
-import { TheLab } from './components/TheLab';
 import { ContactSection } from './components/ContactSection';
 import { ProjectDetailModal } from './components/ProjectDetailModal';
-import { LabExperimentModal } from './components/LabExperimentModal';
 import { TerminalModal } from './components/TerminalModal';
 import { CustomCursor } from './components/CustomCursor';
 import { projects } from './data/projects';
-import { labExperiments } from './data/lab';
-import { Project, LabExperiment } from './types';
+import { Project } from './types';
 import { soundManager } from './utils/audio';
 
 export default function App() {
   const [hasBooted, setHasBooted] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [selectedExperiment, setSelectedExperiment] = useState<LabExperiment | null>(null);
   const [terminalOpen, setTerminalOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -47,12 +43,14 @@ export default function App() {
     return () => window.removeEventListener('select-project', handleSelectProjectEvent);
   }, []);
 
-  // Keyboard shortcut listener for Command Palette / Terminal (⌘K or /) and ESC
+  // Keyboard shortcut listener for Command Palette / Terminal (⌘K or Ctrl+` or ⌘J or /) and ESC
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // ⌘K or Ctrl+K or / (when not typing in an input)
+      // ⌘K or Ctrl+K or Ctrl+` or ⌘J or / (when not typing in an input)
       if (
         (e.key === 'k' && (e.metaKey || e.ctrlKey)) ||
+        (e.key === '`' && (e.metaKey || e.ctrlKey)) ||
+        (e.key === 'j' && (e.metaKey || e.ctrlKey)) ||
         (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA')
       ) {
         e.preventDefault();
@@ -63,13 +61,12 @@ export default function App() {
       if (e.key === 'Escape') {
         if (terminalOpen) setTerminalOpen(false);
         if (selectedProject) setSelectedProject(null);
-        if (selectedExperiment) setSelectedExperiment(null);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [terminalOpen, selectedProject, selectedExperiment]);
+  }, [terminalOpen, selectedProject]);
 
   // Konami Code Easter Egg: Up Up Down Down Left Right Left Right B A
   useEffect(() => {
@@ -107,7 +104,7 @@ export default function App() {
 
   // Track active section on scroll
   useEffect(() => {
-    const sections = ['hero', 'work', 'architecture', 'dna', 'stack', 'timeline', 'lab', 'contact'];
+    const sections = ['hero', 'work', 'architecture', 'dna', 'stack', 'timeline', 'contact'];
 
     const handleScroll = () => {
       const scrollPos = window.scrollY + 200;
@@ -191,15 +188,7 @@ export default function App() {
             {/* 07 // Engineering Timeline (Career Evolution) */}
             <EngineeringTimeline reducedMotion={reducedMotion} />
 
-            {/* 08 // The Lab (Personal Engineering Laboratory) */}
-            <TheLab
-              reducedMotion={reducedMotion}
-              onSelectExperiment={(exp) => {
-                setSelectedExperiment(exp);
-              }}
-            />
-
-            {/* 09 // Contact Section */}
+            {/* 08 // Contact Section */}
             <ContactSection />
           </main>
 
@@ -207,32 +196,16 @@ export default function App() {
           <ProjectDetailModal
             project={selectedProject}
             onClose={() => setSelectedProject(null)}
-            onOpenExperiment={(labId) => {
-              const match = labExperiments.find((e) => e.id === labId);
-              if (match) {
-                setSelectedProject(null);
-                setSelectedExperiment(match);
-              }
-            }}
           />
 
-          {/* Lab Experiment Playground Modal */}
-          <LabExperimentModal
-            experiment={selectedExperiment}
-            onClose={() => setSelectedExperiment(null)}
-          />
-
-          {/* Interactive Terminal Mode Modal */}
+          {/* Interactive Terminal Dock (VS Code style) */}
           <TerminalModal
             isOpen={terminalOpen}
             onClose={() => setTerminalOpen(false)}
+            onOpen={() => setTerminalOpen(true)}
             onOpenProject={(projectId) => {
               const match = projects.find((p) => p.id === projectId);
               if (match) setSelectedProject(match);
-            }}
-            onOpenLab={(labId) => {
-              const match = labExperiments.find((e) => e.id === labId);
-              if (match) setSelectedExperiment(match);
             }}
           />
         </div>

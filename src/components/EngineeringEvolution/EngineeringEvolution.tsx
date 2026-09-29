@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { ContinuousEvolutionScene } from './ContinuousEvolutionScene';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface EngineeringEvolutionProps {
   reducedMotion?: boolean;
@@ -8,6 +9,7 @@ interface EngineeringEvolutionProps {
 export const EngineeringEvolution: React.FC<EngineeringEvolutionProps> = ({
   reducedMotion = false,
 }) => {
+  const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const progressRef = useRef(0);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -66,20 +68,20 @@ export const EngineeringEvolution: React.FC<EngineeringEvolutionProps> = ({
           <div className="flex items-center gap-3">
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
             <span className="text-cyan-300 font-semibold tracking-wider">
-              05 / ENGINEERING EVOLUTION
+              {t.evolution.kicker}
             </span>
           </div>
 
           <div className="text-[11px] font-mono tracking-widest text-slate-400 font-medium">
             {p < 0.30
-              ? 'BEFORE AI'
+              ? t.evolution.tagBeforeAI
               : p < 0.58
-              ? 'THE COLLAPSE'
+              ? t.evolution.tagCollapse
               : p < 0.65
-              ? 'INTENT'
+              ? t.evolution.tagIntent
               : p < 0.85
-              ? 'DISTRIBUTED INTELLIGENCE'
-              : 'ENGINEER DECIDES'}
+              ? t.evolution.tagDistributed
+              : t.evolution.tagDecides}
           </div>
         </header>
 
@@ -98,15 +100,15 @@ export const EngineeringEvolution: React.FC<EngineeringEvolutionProps> = ({
               }}
               className="space-y-6 transition-all duration-300"
             >
-              <h2 className="text-4xl sm:text-7xl lg:text-8xl font-bold font-display text-white tracking-tight leading-[1.02] uppercase drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]">
-                HOW I BUILD <br />
-                HAS CHANGED.
+              <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-display text-white tracking-tight leading-[1.1] uppercase drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]">
+                {t.evolution.introTitle1} <br />
+                {t.evolution.introTitle2}
               </h2>
               <p className="text-base sm:text-xl text-slate-200 font-light max-w-2xl mx-auto leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                Before AI, most of my engineering attention lived inside the implementation loop.
+                {t.evolution.introSub}
               </p>
               <div className="pt-2 text-xs font-mono text-slate-400 drop-shadow-[0_1px_6px_rgba(0,0,0,0.8)]">
-                ↓ SCROLL TO EXPLORE THE TIMELINE
+                {t.evolution.scrollHint}
               </div>
             </div>
           )}
@@ -123,26 +125,26 @@ export const EngineeringEvolution: React.FC<EngineeringEvolutionProps> = ({
               className="space-y-6 transition-all duration-300"
             >
               <div className="text-xs font-mono tracking-widest text-slate-300 uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-                THE LINEAR LOOP // 2018–2022
+                {t.evolution.linearTag}
               </div>
 
               {/* Clean Unboxed Text Hierarchy (No Cards) */}
               <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 font-mono text-xs sm:text-sm font-bold tracking-widest text-slate-200 drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)]">
-                <span>UNDERSTAND</span>
+                <span>{t.evolution.stepUnderstand}</span>
                 <span className="text-cyan-400">→</span>
-                <span>DESIGN</span>
+                <span>{t.evolution.stepDesign}</span>
                 <span className="text-cyan-400">→</span>
-                <span className="text-white">CODE</span>
+                <span className="text-white">{t.evolution.stepCode}</span>
                 <span className="text-cyan-400">→</span>
-                <span>DEBUG</span>
+                <span>{t.evolution.stepDebug}</span>
                 <span className="text-cyan-400">→</span>
-                <span>TEST</span>
+                <span>{t.evolution.stepTest}</span>
                 <span className="text-cyan-400">→</span>
-                <span>DEPLOY</span>
+                <span>{t.evolution.stepDeploy}</span>
               </div>
 
               <p className="text-sm sm:text-base text-slate-300 font-light max-w-lg mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
-                Engineering velocity was strictly bound to human typing and manual syntax inspection.
+                {t.evolution.linearSub}
               </p>
             </div>
           )}
@@ -158,11 +160,11 @@ export const EngineeringEvolution: React.FC<EngineeringEvolutionProps> = ({
               }}
               className="space-y-4 transition-all duration-300"
             >
-              <h3 className="text-3xl sm:text-5xl font-bold font-display text-white tracking-tight uppercase drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
-                THE LOOP DESTABILIZED.
+              <h3 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-display text-white tracking-tight uppercase drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)] leading-[1.15]">
+                {t.evolution.complexTitle}
               </h3>
               <p className="text-sm sm:text-base text-slate-200 font-light max-w-md mx-auto drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                Nodes detached into depth. Connecting pipelines stretched. Adding more keystrokes no longer created leverage.
+                {t.evolution.complexSub}
               </p>
             </div>
           )}
@@ -179,14 +181,14 @@ export const EngineeringEvolution: React.FC<EngineeringEvolutionProps> = ({
               className="space-y-4 transition-all duration-300"
             >
               <div className="text-xs font-mono tracking-widest text-cyan-300 uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-                CONVERGENCE
+                {t.evolution.collapseTag}
               </div>
-              <h3 className="text-3xl sm:text-6xl font-bold font-display text-white tracking-tight uppercase drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
-                CODE, DEBUG, AND TEST <br />
-                COLLAPSED.
+              <h3 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-display text-white tracking-tight uppercase drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)] leading-[1.15]">
+                {t.evolution.collapseTitle1} <br />
+                {t.evolution.collapseTitle2}
               </h3>
               <p className="text-sm sm:text-base text-slate-200 font-light max-w-md mx-auto drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                The entire implementation loop folded inward toward a single point.
+                {t.evolution.collapseSub}
               </p>
             </div>
           )}
@@ -203,12 +205,12 @@ export const EngineeringEvolution: React.FC<EngineeringEvolutionProps> = ({
               className="space-y-6 transition-all duration-300"
             >
               <div className="inline-block px-5 py-2 rounded-full border border-cyan-400/90 bg-cyan-950/80 text-cyan-200 font-mono text-sm tracking-[0.25em] font-bold shadow-[0_0_30px_rgba(6,182,212,0.4)] backdrop-blur-sm">
-                INTENT
+                {t.evolution.intentBadge}
               </div>
 
-              <blockquote className="text-3xl sm:text-5xl lg:text-6xl font-display font-medium text-white tracking-tight uppercase leading-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
-                THE PROBLEM NEVER CHANGED. <br />
-                <span className="text-cyan-300 drop-shadow-[0_0_20px_rgba(6,182,212,0.4)]">THE LEVERAGE DID.</span>
+              <blockquote className="text-2xl sm:text-4xl lg:text-5xl font-display font-medium text-white tracking-tight uppercase leading-[1.2] drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
+                {t.evolution.intentQuote1} <br />
+                <span className="text-cyan-300 drop-shadow-[0_0_20px_rgba(6,182,212,0.4)]">{t.evolution.intentQuote2}</span>
               </blockquote>
             </div>
           )}
@@ -224,23 +226,23 @@ export const EngineeringEvolution: React.FC<EngineeringEvolutionProps> = ({
               }}
               className="space-y-6 transition-all duration-300"
             >
-              <h3 className="text-3xl sm:text-6xl font-bold font-display text-white tracking-tight uppercase drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
-                BUILDING WITH <br />
-                INTELLIGENCE.
+              <h3 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-display text-white tracking-tight uppercase drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)] leading-[1.15]">
+                {t.evolution.aiTitle1} <br />
+                {t.evolution.aiTitle2}
               </h3>
 
               <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 font-mono text-xs sm:text-sm tracking-wider text-cyan-200 drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
-                <span>INTENT</span>
+                <span>{t.evolution.stepIntent}</span>
                 <span className="text-slate-500">→</span>
-                <span className="text-white font-bold">AI / AGENTS</span>
+                <span className="text-white font-bold">{t.evolution.stepAgents}</span>
                 <span className="text-slate-500">→</span>
-                <span>TOOLS / RAG / MCP</span>
+                <span>{t.evolution.stepTools}</span>
                 <span className="text-slate-500">→</span>
-                <span>EXECUTE</span>
+                <span>{t.evolution.stepExec}</span>
               </div>
 
               <p className="text-sm sm:text-base text-slate-200 font-light max-w-lg mx-auto drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                The architecture is no longer linear. It is a distributed, stateful network of models, tools, and vector context.
+                {t.evolution.aiSub}
               </p>
             </div>
           )}
@@ -257,15 +259,16 @@ export const EngineeringEvolution: React.FC<EngineeringEvolutionProps> = ({
               className="space-y-5 transition-all duration-300"
             >
               <div className="text-xs font-mono tracking-widest text-cyan-300 uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-                VERIFICATION OVER IMPLEMENTATION
+                {t.evolution.verifyTag}
               </div>
 
-              <h3 className="text-3xl sm:text-5xl font-bold font-display text-white tracking-tight uppercase drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
-                EXECUTE → VERIFY.
+              <h3 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-display text-white tracking-tight uppercase drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)] leading-[1.15]">
+                {t.evolution.verifyTitle1} <br />
+                {t.evolution.verifyTitle2}
               </h3>
 
               <p className="text-sm sm:text-base text-slate-200 font-light max-w-lg mx-auto drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                When generation cost drops to zero, verification becomes the critical engineering bottleneck. Invariants, schemas, and test harnesses reign supreme.
+                {t.evolution.verifySub}
               </p>
             </div>
           )}
@@ -284,19 +287,18 @@ export const EngineeringEvolution: React.FC<EngineeringEvolutionProps> = ({
               {/* Central Focal Badge */}
               <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/90 bg-white/15 text-white font-mono text-xs sm:text-sm font-bold tracking-[0.2em] uppercase backdrop-blur-md shadow-[0_0_35px_rgba(255,255,255,0.4)]">
                 <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-                <span>ENGINEER DECIDES</span>
+                <span>{t.evolution.climaxTag}</span>
               </div>
 
               <div className="space-y-3 font-mono text-xs sm:text-sm text-slate-200 max-w-xl mx-auto leading-relaxed drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
-                <div>AI CAN GENERATE CODE. IT CAN EXPLORE, REASON, EXECUTE, AND AUTOMATE.</div>
-                <div className="text-slate-300">THE TOOLS CHANGED. THE ENGINEERING DIDN'T.</div>
+                <div>{t.evolution.climaxSub}</div>
               </div>
 
               {/* Largest final statement */}
-              <h1 className="text-5xl sm:text-7xl lg:text-9xl font-bold font-display text-white tracking-tight leading-none uppercase drop-shadow-[0_4px_40px_rgba(0,0,0,1)] pt-2">
-                MY ROLE <br />
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-display text-white tracking-tight leading-[1.15] uppercase drop-shadow-[0_4px_40px_rgba(0,0,0,1)] pt-2">
+                {t.evolution.climaxTitle1} <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-200 to-white drop-shadow-[0_0_30px_rgba(6,182,212,0.4)]">
-                  EVOLVED.
+                  {t.evolution.climaxTitle2}
                 </span>
               </h1>
             </div>

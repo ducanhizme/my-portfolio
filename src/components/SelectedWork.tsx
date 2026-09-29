@@ -1,26 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react';
 import { Project } from '../types';
-import { projects } from '../data/projects';
+import { projects as staticProjects } from '../data/projects';
+import { fetchProjectsFromCMS } from '../services/cms';
 import { soundManager } from '../utils/audio';
 import { SpotlightCard, ShinyText, DecryptedText } from './ReactBits';
+import { useLanguage } from '../context/LanguageContext';
 
 interface SelectedWorkProps {
   onSelectProject: (project: Project) => void;
 }
 
 export const SelectedWork: React.FC<SelectedWorkProps> = ({ onSelectProject }) => {
-  // Default to 4th card (AI DOCUMENT INTELLIGENCE) as shown active in mockup image.png
+  const { t, language, localizeProject } = useLanguage();
+  const [projectList, setProjectList] = useState<Project[]>(staticProjects);
+  // Default to 4th card (AI DOCUMENT INTELLIGENCE) or last card
   const [activeIndex, setActiveIndex] = useState(3);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchProjectsFromCMS().then((cmsProjects) => {
+      if (isMounted && cmsProjects && cmsProjects.length > 0) {
+        setProjectList(cmsProjects);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handlePrev = () => {
     soundManager.playClick();
-    setActiveIndex((prev) => (prev > 0 ? prev - 1 : projects.length - 1));
+    setActiveIndex((prev) => (prev > 0 ? prev - 1 : projectList.length - 1));
   };
 
   const handleNext = () => {
     soundManager.playClick();
-    setActiveIndex((prev) => (prev < projects.length - 1 ? prev + 1 : 0));
+    setActiveIndex((prev) => (prev < projectList.length - 1 ? prev + 1 : 0));
   };
 
   return (
@@ -78,12 +94,13 @@ export const SelectedWork: React.FC<SelectedWorkProps> = ({ onSelectProject }) =
         {/* ================================================== */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16">
           <div className="space-y-3">
-            {/* Kicker: 03 / SELECTED WORK */}
+            {/* Kicker */}
             <div className="flex items-center gap-3 text-xs font-mono tracking-widest text-cyan-400">
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
               <span className="text-cyan-300 font-medium">
                 <DecryptedText
-                  text="03 / SELECTED ARCHITECTURES"
+                  key={language}
+                  text={t.work.kicker}
                   speed={35}
                   maxIterations={12}
                   sequential={true}
@@ -91,36 +108,38 @@ export const SelectedWork: React.FC<SelectedWorkProps> = ({ onSelectProject }) =
               </span>
             </div>
 
-            {/* Title: ENGINEERED FOR PRODUCTION. */}
-            <h2 className="text-4xl sm:text-6xl lg:text-7xl font-bold font-display text-white tracking-tight leading-[1.02]">
-              ENGINEERED <br />
-              <ShinyText text="FOR PRODUCTION." className="text-white" />
+            {/* Title */}
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-display text-white tracking-tight leading-[1.08]">
+              <span className="block">{t.work.headline1}</span>
+              <span className="block">
+                <ShinyText text={t.work.headline2} className="text-white" />
+              </span>
             </h2>
 
             {/* Subtitle */}
             <p className="text-slate-400 text-sm sm:text-base font-normal max-w-lg leading-relaxed">
-              Real-world AI systems, built end-to-end and designed for long-term impact.
+              {t.work.subtitle}
             </p>
           </div>
 
-          {/* Right counter & controls: 04 / 04  < > */}
+          {/* Right counter & controls */}
           <div className="flex items-center gap-5 self-start sm:self-auto font-mono text-xs">
             <span className="tracking-wider">
               <span className="text-cyan-400 font-bold">0{activeIndex + 1}</span>{' '}
-              <span className="text-slate-400">/ 0{projects.length}</span>
+              <span className="text-slate-400">/ 0{projectList.length}</span>
             </span>
             <div className="flex items-center gap-2">
               <button
                 onClick={handlePrev}
                 className="w-9 h-9 rounded-full border border-white/15 hover:border-cyan-400/60 bg-black/40 hover:bg-cyan-950/40 flex items-center justify-center text-slate-300 hover:text-white transition-all cursor-pointer backdrop-blur-sm"
-                aria-label="Previous project"
+                aria-label={t.work.prevBtn}
               >
                 <ChevronLeft size={15} />
               </button>
               <button
                 onClick={handleNext}
                 className="w-9 h-9 rounded-full border border-white/15 hover:border-cyan-400/60 bg-black/40 hover:bg-cyan-950/40 flex items-center justify-center text-slate-300 hover:text-white transition-all cursor-pointer backdrop-blur-sm"
-                aria-label="Next project"
+                aria-label={t.work.nextBtn}
               >
                 <ChevronRight size={15} />
               </button>
@@ -132,7 +151,8 @@ export const SelectedWork: React.FC<SelectedWorkProps> = ({ onSelectProject }) =
         {/* 3. 4-CARD SHOWCASE GALLERY (1:1 with Panel 1)      */}
         {/* ================================================== */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
-          {projects.map((project, idx) => {
+          {projectList.map((rawProject, idx) => {
+            const project = localizeProject(rawProject);
             const isSelected = activeIndex === idx;
 
             return (

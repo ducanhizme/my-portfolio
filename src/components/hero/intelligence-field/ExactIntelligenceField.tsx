@@ -200,9 +200,9 @@ export const ExactIntelligenceField: React.FC<ExactIntelligenceFieldProps> = ({
         {/* Agent tag line */}
         <line
           x1={(68.8 / 100) * 1920}
-          y1={(7.5 / 100) * 1080}
+          y1={(11.5 / 100) * 1080}
           x2={(68.8 / 100) * 1920 + 70}
-          y2={(7.5 / 100) * 1080}
+          y2={(11.5 / 100) * 1080}
           stroke="#7dd3fc"
           strokeWidth="0.8"
           strokeOpacity="0.5"
@@ -441,7 +441,7 @@ export const ExactIntelligenceField: React.FC<ExactIntelligenceFieldProps> = ({
       <div
         style={{
           left: `${68.8 + 4.2}%`,
-          top: `${7.5 - 1.6}%`,
+          top: `${11.5 - 1.6}%`,
           transform: `translate3d(${pxOffset * 0.8}px, ${pyOffset * 0.8}px, 0)`,
         }}
         onClick={() => {
