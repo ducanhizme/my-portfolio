@@ -206,14 +206,12 @@ async function seed() {
     await payload.updateGlobal({
       slug: 'site-config',
       data: {
-        siteName: 'Duc Anh Portfolio - Production AI Systems',
-        bio: 'AI Systems Architect & Senior Software Engineer specializing in Agentic Knowledge Systems, High-throughput Multimodal RAG, and Autonomous Testing Engines.',
-        availabilityStatus: 'OPEN FOR CONTRACT & ARCHITECTURAL CONSULTING',
-        contactEmail: 'contact@ducanh.systems',
-        socialLinks: [
-          { platform: 'GitHub', url: 'https://github.com' },
-          { platform: 'LinkedIn', url: 'https://linkedin.com' },
-        ],
+        name: 'DUC ANH',
+        title: 'SOFTWARE ENGINEER · AI / AGENT SYSTEMS / WEB',
+        statusText: 'OPEN FOR CONTRACT & ARCHITECTURAL CONSULTING',
+        email: 'contact@ducanh.systems',
+        github: 'https://github.com/ducanhizme',
+        linkedin: 'https://linkedin.com/in/ducanhizme',
       },
     })
     console.log('✅ Global SiteConfig updated.')

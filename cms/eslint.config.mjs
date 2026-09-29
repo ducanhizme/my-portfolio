@@ -6,6 +6,7 @@ const eslintConfig = [
   ...nextTypescript,
   {
     rules: {
+      'react/display-name': 'off',
       '@typescript-eslint/ban-ts-comment': 'warn',
       '@typescript-eslint/no-empty-object-type': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
