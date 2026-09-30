@@ -16,6 +16,7 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
+  serverURL: process.env.NEXT_PUBLIC_SERVER_URL || '',
   admin: {
     user: Users.slug,
     importMap: {
@@ -43,6 +44,7 @@ export default buildConfig({
     'http://localhost:3000',
     'http://localhost:3001',
     'https://ducanh.systems',
+    'https://ducanhverse-admin.vercel.app',
     '*',
   ],
   csrf: [
@@ -50,5 +52,6 @@ export default buildConfig({
     'http://localhost:3000',
     'http://localhost:3001',
     'https://ducanh.systems',
+    'https://ducanhverse-admin.vercel.app',
   ],
 })
