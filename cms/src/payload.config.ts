@@ -39,15 +39,7 @@ export default buildConfig({
     },
   }),
   sharp,
-  cors: [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'http://localhost:3001',
-    'https://ducanh.systems',
-    'https://ducanhverse-admin.vercel.app',
-    'https://portfolio.ducanhverse.site',
-    '*',
-  ],
+  cors: '*',
   csrf: [
     'http://localhost:5173',
     'http://localhost:3000',
