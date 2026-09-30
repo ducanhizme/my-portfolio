@@ -7,7 +7,10 @@ export const Projects: CollectionConfig = {
     defaultColumns: ['number', 'title', 'category', 'updatedAt'],
   },
   access: {
-    read: () => true, // Public API access
+    read: () => true,
+    create: ({ req }) => !!req.user,
+    update: ({ req }) => !!req.user,
+    delete: ({ req }) => !!req.user,
   },
   fields: [
     {
